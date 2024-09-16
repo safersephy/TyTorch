@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="Tytorch",  # Name of the package
-    version="0.2.0",  # Package version
+    version="0.3.0",  # Package version
     author="Tijs van der Velden",
     author_email="tijsvdvelden@hotmail.com",
     description="A straightforward package to simplify pytorch training",
