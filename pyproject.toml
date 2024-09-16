@@ -1,14 +1,13 @@
 [project]
 name = "tytorch"
-version = "0.1.0"
-description = "Add your description here"
+version = "0.2.0"
+description = "A basic trainer for pytorch"
 authors = [
     { name = "SaferSephy", email = "t.vandervelden3@student.han.nl" }
 ]
 dependencies = [
     "loguru",
     "pydantic",
-    "setuptools>=75.1.0",
 ]
 readme = "README.md"
 requires-python = ">= 3.8"
@@ -23,8 +22,5 @@ dev-dependencies = [
     "ipykernel",
 ]
 
-[tool.hatch.metadata]
-allow-direct-references = true
-
-[tool.hatch.build.targets.wheel]
-packages = ["src/tytorch"]
+[project.urls]
+homepage = "https://github.com/safersephy/tytorch"
