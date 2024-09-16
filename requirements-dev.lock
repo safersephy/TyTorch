@@ -68,6 +68,8 @@ python-dateutil==2.9.0.post0
 pyzmq==26.2.0
     # via ipykernel
     # via jupyter-client
+setuptools==75.1.0
+    # via tytorch
 six==1.16.0
     # via asttokens
     # via python-dateutil
