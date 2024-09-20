@@ -3,13 +3,17 @@ from loguru import logger
 import torch
 from torcheval.metrics.metric import Metric
 from torch.utils.data import DataLoader
-
+from pathlib import Path
 from tqdm import tqdm
 import mlflow
 
 
 class EarlyStopping:
-    def __init__(self, patience: int = 5, min_delta: float = 0.0, mode: str = 'min'):
+    def __init__(
+        self, 
+        patience: int = 5, 
+        min_delta: float = 0.0, 
+        mode: str = 'min'):
         """
         Args:
             patience (int): How many epochs to wait after last improvement.
@@ -22,12 +26,20 @@ class EarlyStopping:
         self.best_value: Optional[float] = None
         self.counter: int = 0
         self.early_stop: bool = False
+        folder = Path("./earlystopping")
+        self.path = folder / "checkpoint.pt"
+        
+        if not folder.exists():
+            folder.mkdir(parents=True, exist_ok=True)        
 
-    def __call__(self, current_value: float) -> None:
+
+    def __call__(self, current_value: float, model: torch.nn.Module) -> None:
         if self.best_value is None:
             self.best_value = current_value
+            self.save_checkpoint(current_value, model)
         elif self._is_improvement(current_value):
             self.best_value = current_value
+            self.save_checkpoint(current_value, model)            
             self.counter = 0
         else:
             self.counter += 1
@@ -47,6 +59,18 @@ class EarlyStopping:
         self.counter = 0
         self.early_stop = False
 
+    def save_checkpoint(self, current_value: float, model: torch.nn.Module) -> None:
+        """Saves model when validation loss decrease."""
+        if self.verbose:
+            logger.info(
+                f"Validation loss ({self.best_loss:.4f} --> {current_value:.4f})."
+                f"Saving {self.path} ..."
+            )
+        torch.save(model, self.path)
+        self.val_loss_min = current_value
+
+    def get_best(self) -> torch.nn.Module:
+        return torch.load(self.path)
 
 
 
@@ -95,13 +119,14 @@ class Trainer:
                 f"Epoch {epoch} train {train_loss:.4f} test {val_loss:.4f} metric {metric_results}"  # noqa E501
             )
 
-            
             if self.early_stopping:
                 self.early_stopping(val_loss)
                 if self.early_stopping.early_stop:
                     logger.info(
                         f"Early stopping triggered at epoch {epoch+1}"
                         )
+                    logger.info("retrieving best model.")
+                    self.model = self.early_stopping.get_best()
                     break
             
     def train(self, dataloader: DataLoader) -> float:
