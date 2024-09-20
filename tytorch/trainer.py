@@ -120,7 +120,7 @@ class Trainer:
             )
 
             if self.early_stopping:
-                self.early_stopping(val_loss)
+                self.early_stopping(val_loss,self.model)
                 if self.early_stopping.early_stop:
                     logger.info(
                         f"Early stopping triggered at epoch {epoch+1}"
