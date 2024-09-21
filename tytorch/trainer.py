@@ -7,6 +7,8 @@ from pathlib import Path
 from tqdm import tqdm
 import mlflow
 from ray import train
+from ray.train import Checkpoint
+import tempfile
 
 class EarlyStopping:
     def __init__(
@@ -177,6 +179,16 @@ class Trainer:
 
         #TODO scheduler
         
-        train.report({"valid_loss": valid_loss})
+        
+        
+        with tempfile.TemporaryDirectory() as temp_checkpoint_dir:
+            checkpoint = None
+            torch.save(
+                self.model.state_dict(),
+                Path(temp_checkpoint_dir) / "model.pth"
+            )
+            checkpoint = Checkpoint.from_directory(temp_checkpoint_dir)
+            # Send the current training result back to Tune
+            train.report({"valid_loss": valid_loss}, checkpoint=checkpoint)
 
         return valid_loss    
