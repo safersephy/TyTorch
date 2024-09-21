@@ -6,13 +6,14 @@ from torch.utils.data import DataLoader
 from pathlib import Path
 from tqdm import tqdm
 import mlflow
-
+from ray import train
 
 class EarlyStopping:
     def __init__(
         self, 
         patience: int = 5, 
         min_delta: float = 0.0, 
+        save: bool = True,
         mode: str = 'min'):
         """
         Args:
@@ -26,6 +27,7 @@ class EarlyStopping:
         self.best_value: Optional[float] = None
         self.counter: int = 0
         self.early_stop: bool = False
+        self.save = save
         folder = Path("./earlystopping")
         self.path = folder / "checkpoint.pt"
         
@@ -61,11 +63,12 @@ class EarlyStopping:
 
     def save_checkpoint(self, current_value: float, model: torch.nn.Module) -> None:
         """Saves model when validation loss decrease."""
-        logger.info(
-            f"Validation loss ({self.best_value:.4f} --> {current_value:.4f})."
-            f"Saving {self.path} ..."
-        )
-        torch.save(model, self.path)
+        if self.save:
+            logger.info(
+                f"Validation loss ({self.best_value:.4f} --> {current_value:.4f})."
+                f"Saving {self.path} ..."
+            )
+            torch.save(model, self.path)
 
     def get_best(self) -> torch.nn.Module:
         return torch.load(self.path)
@@ -93,6 +96,7 @@ class Trainer:
         #TODO scheduler
         
     def fit(self, n_epochs, trainDataloader: DataLoader, validDataloader: DataLoader) -> None:
+
         for epoch in tqdm(range(n_epochs), colour="#1e4706"):
             train_loss = self.train(trainDataloader)
 
@@ -172,5 +176,7 @@ class Trainer:
 
 
         #TODO scheduler
+        
+        train.report({"valid_loss": valid_loss})
 
         return valid_loss    
