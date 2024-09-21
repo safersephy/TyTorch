@@ -191,7 +191,7 @@ class Trainer:
             # Send the current training result back to Tune
             
             
-            metric_results = {metric.__class__.__name__: metric.compute() for metric in self.metrics}
+            metric_results = {metric.__class__.__name__: float(metric.compute()) for metric in self.metrics}
 
             train.report({**{"valid_loss": valid_loss, }, **metric_results}, checkpoint=checkpoint)
 
