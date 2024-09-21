@@ -189,6 +189,10 @@ class Trainer:
             )
             checkpoint = Checkpoint.from_directory(temp_checkpoint_dir)
             # Send the current training result back to Tune
-            train.report({"valid_loss": valid_loss}, checkpoint=checkpoint)
+            
+            
+            metric_results = {metric.__class__.__name__: metric.compute() for metric in self.metrics}
+
+            train.report({**{"valid_loss": valid_loss, }, **metric_results}, checkpoint=checkpoint)
 
         return valid_loss    
