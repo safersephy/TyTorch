@@ -1,9 +1,9 @@
 [project]
 name = "tytorch"
-version = "0.6.8"
-description = "Add your description here"
+version = "0.6.9"
+description = "A simple trainer for pytorch"
 authors = [
-    { name = "SaferSephy", email = "t.vandervelden3@student.han.nl" }
+    { name = "SaferSephy" }
 ]
 dependencies = [
     "loguru",
