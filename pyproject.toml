@@ -1,6 +1,6 @@
 [project]
 name = "tytorch"
-version = "0.6.7"
+version = "0.6.8"
 description = "Add your description here"
 authors = [
     { name = "SaferSephy", email = "t.vandervelden3@student.han.nl" }
