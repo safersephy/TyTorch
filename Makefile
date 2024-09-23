@@ -10,3 +10,4 @@ format:
 
 lint:
 	ruff check tytorch
+	mypy tytorch  --ignore-missing-imports
