@@ -85,7 +85,7 @@ class Trainer:
         metrics: List[Metric[torch.Tensor]],
         loss_fn: torch.nn.Module,
         optimizer: torch.optim.Optimizer,
-        device: Optional[str] = None,
+        device: str,
         early_stopping: Optional[EarlyStopping] = None,
         lrscheduler: torch.optim.lr_scheduler.LRScheduler = None,        
     ) -> None:
@@ -100,6 +100,7 @@ class Trainer:
        
         if self.lrscheduler:
             self._lrscheduler_metric_step = step_requires_metric(self.lrscheduler)
+        model = model.to(self.device)
             
     def fit(
         self, n_epochs, trainDataloader: DataLoader, validDataloader: DataLoader
@@ -153,9 +154,7 @@ class Trainer:
         for _ in tqdm(range(train_steps), colour="#1e4706"):
 
             x, y = next(iter(dataloader))
-
-            if self.device:
-                x, y = x.to(self.device), y.to(self.device)
+            x, y = x.to(self.device), y.to(self.device)
 
             self.optimizer.zero_grad()
 
@@ -175,8 +174,7 @@ class Trainer:
 
         for _ in range(len(dataloader)):
             x, y = next(iter(dataloader))
-            if self.device:
-                x, y = x.to(self.device), y.to(self.device)
+            x, y = x.to(self.device), y.to(self.device)
             yhat = self.model(x)
             valid_loss += self.loss_fn(yhat, y).cpu().detach().numpy()
             y = y
