@@ -1,7 +1,7 @@
 import torch
 import pickle
 from loguru import logger
-
+import inspect
 
 def get_device() -> str:
     if torch.backends.mps.is_available() and torch.backends.mps.is_built():
@@ -34,3 +34,11 @@ def load_params_from_disk(file_path: str) -> dict:
     except Exception as e:
         print(f"Error loading params from disk: {e}")
         return {}
+
+def step_requires_metric(obj):
+    sig = inspect.signature(obj.step)
+    
+    for param in sig.parameters.values():
+        if param.name == 'metric':
+            return param.default == inspect.Parameter.empty
+    return False   

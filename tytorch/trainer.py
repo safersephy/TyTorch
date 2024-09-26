@@ -10,7 +10,7 @@ from ray.train import Checkpoint
 from torch.utils.data import DataLoader
 from torcheval.metrics.metric import Metric
 from tqdm import tqdm
-
+from tytorch.utils import step_requires_metric
 
 class EarlyStopping:
     def __init__(
@@ -87,6 +87,7 @@ class Trainer:
         optimizer: torch.optim.Optimizer,
         device: Optional[str] = None,
         early_stopping: Optional[EarlyStopping] = None,
+        lrscheduler: torch.optim.lr_scheduler.LRScheduler = None,        
     ) -> None:
 
         self.model = model
@@ -95,9 +96,11 @@ class Trainer:
         self.optimizer = optimizer
         self.device = device
         self.early_stopping = early_stopping
-
-        # TODO scheduler
-
+        self.lrscheduler = lrscheduler
+       
+        if self.lrscheduler:
+            self._lrscheduler_metric_step = step_requires_metric(self.lrscheduler)
+            
     def fit(
         self, n_epochs, trainDataloader: DataLoader, validDataloader: DataLoader
     ) -> None:
@@ -111,7 +114,7 @@ class Trainer:
             val_loss = self.evaluate(validDataloader)
 
             mlflow.log_metric("loss/train_epoch", train_loss, step=epoch)
-            mlflow.log_metric("loss/test_epoch", val_loss, step=epoch)
+            mlflow.log_metric("loss/val_epoch", val_loss, step=epoch)
 
             for metric in self.metrics:
                 mlflow.log_metric(
@@ -126,8 +129,14 @@ class Trainer:
             }
 
             logger.info(
-                f"Epoch {epoch} train {train_loss:.4f} test {val_loss:.4f} metric {metric_results}"  # noqa E501
+                f"Epoch {epoch} train {train_loss:.4f} val {val_loss:.4f} metric {metric_results}"  # noqa E501
             )
+            
+            if self.lrscheduler:
+                if self._lrscheduler_metric_step:                    
+                    self.lrscheduler.step(val_loss)
+                else:
+                    self.lrscheduler.step()
 
             if self.early_stopping:
                 self.early_stopping(val_loss, self.model)

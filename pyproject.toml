@@ -1,6 +1,6 @@
 [project]
 name = "tytorch"
-version = "0.6.91"
+version = "0.6.92"
 description = "A simple trainer for pytorch"
 authors = [
     { name = "SaferSephy" }
