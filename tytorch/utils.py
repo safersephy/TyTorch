@@ -39,6 +39,6 @@ def step_requires_metric(obj):
     sig = inspect.signature(obj.step)
     
     for param in sig.parameters.values():
-        if param.name == 'metric':
+        if param.name == 'metrics':
             return param.default == inspect.Parameter.empty
     return False   
