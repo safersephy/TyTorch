@@ -185,8 +185,6 @@ class Trainer:
 
         valid_loss /= valid_steps
 
-        # TODO scheduler
-
         with tempfile.TemporaryDirectory() as temp_checkpoint_dir:
             checkpoint = None
             torch.save(self.model.state_dict(), Path(temp_checkpoint_dir) / "model.pth")

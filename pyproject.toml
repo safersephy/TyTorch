@@ -1,6 +1,6 @@
 [project]
 name = "tytorch"
-version = "0.6.92"
+version = "0.7"
 description = "A simple trainer for pytorch"
 authors = [
     { name = "SaferSephy" }
@@ -8,10 +8,14 @@ authors = [
 dependencies = [
     "loguru",
     "pydantic",
-    "setuptools>=75.1.0",
+    "mlflow>=2.16.2",
+    "torch>=2.4.1",
+    "ray>=2.37.0",
+    "torcheval>=0.0.7",
+    "tqdm>=4.66.5",
 ]
 readme = "README.md"
-requires-python = ">= 3.8"
+requires-python = ">= 3.11.5"
 
 [build-system]
 requires = ["hatchling"]
