@@ -10,7 +10,9 @@ from ray.train import Checkpoint
 from torch.utils.data import DataLoader
 from torcheval.metrics.metric import Metric
 from tqdm import tqdm
+
 from tytorch.utils import step_requires_metric
+
 
 class EarlyStopping:
     def __init__(
@@ -54,9 +56,9 @@ class EarlyStopping:
 
     def _is_improvement(self, current_value: float) -> bool:
         if self.mode == "min":
-            return current_value < self.best_value - self.min_delta
+            return current_value < self.best_value - self.min_delta  # type: ignore
         elif self.mode == "max":
-            return current_value > self.best_value + self.min_delta
+            return current_value > self.best_value + self.min_delta  # type: ignore
         else:
             raise ValueError("Invalid mode. Choose 'min' or 'max'.")
 
@@ -87,9 +89,8 @@ class Trainer:
         optimizer: torch.optim.Optimizer,
         device: str,
         early_stopping: Optional[EarlyStopping] = None,
-        lrscheduler: torch.optim.lr_scheduler.LRScheduler = None,        
+        lrscheduler: torch.optim.lr_scheduler.LRScheduler = None,
     ) -> None:
-
         self.model = model
         self.metrics = metrics
         self.loss_fn = loss_fn
@@ -97,22 +98,21 @@ class Trainer:
         self.device = device
         self.early_stopping = early_stopping
         self.lrscheduler = lrscheduler
-       
+
         if self.lrscheduler:
             self._lrscheduler_metric_step = step_requires_metric(self.lrscheduler)
         model = model.to(self.device)
-            
-    def fit(
-        self, n_epochs, trainDataloader: DataLoader, validDataloader: DataLoader
-    ) -> None:
 
+    def fit(
+        self, n_epochs, train_dataloader: DataLoader, valid_dataloader: DataLoader
+    ) -> None:
         for epoch in tqdm(range(n_epochs), colour="#1e4706"):
-            train_loss = self.train(trainDataloader)
+            train_loss = self.train(train_dataloader)
 
             for metric in self.metrics:
                 metric.reset()
 
-            val_loss = self.evaluate(validDataloader)
+            val_loss = self.evaluate(valid_dataloader)
 
             mlflow.log_metric("loss/train_epoch", train_loss, step=epoch)
             mlflow.log_metric("loss/val_epoch", val_loss, step=epoch)
@@ -132,15 +132,15 @@ class Trainer:
             logger.info(
                 f"Epoch {epoch} train {train_loss:.4f} val {val_loss:.4f} metric {metric_results}"  # noqa E501
             )
-            
+
             if self.lrscheduler:
-                if self._lrscheduler_metric_step:                    
+                if self._lrscheduler_metric_step:
                     self.lrscheduler.step(val_loss)
                 else:
                     self.lrscheduler.step()
 
             if self.early_stopping:
-                self.early_stopping(val_loss, self.model)
+                self.early_stopping(val_loss, self.model)  # type: ignore
                 if self.early_stopping.early_stop:
                     logger.info(f"Early stopping triggered at epoch {epoch+1}")
                     logger.info("retrieving best model.")
@@ -152,7 +152,6 @@ class Trainer:
         train_loss: float = 0.0
         train_steps = len(dataloader)
         for _ in tqdm(range(train_steps), colour="#1e4706"):
-
             x, y = next(iter(dataloader))
             x, y = x.to(self.device), y.to(self.device)
 
@@ -207,4 +206,4 @@ class Trainer:
                 checkpoint=checkpoint,
             )
 
-        return valid_loss
+        return valid_loss  # type: ignore

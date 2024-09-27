@@ -5,9 +5,7 @@
 # Set the host for the MLflow server to bind to (localhost in this case)
 
 format:
-	isort -v tytorch
-	black tytorch
-
+	ruff format tytorch
 lint:
-	ruff check tytorch
+	ruff check tytorch --fix
 	mypy tytorch  --ignore-missing-imports
