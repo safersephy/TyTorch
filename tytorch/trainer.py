@@ -90,6 +90,7 @@ class Trainer:
         device: str,
         early_stopping: Optional[EarlyStopping] = None,
         lrscheduler: torch.optim.lr_scheduler.LRScheduler = None,
+        quiet: bool = False
     ) -> None:
         self.model = model
         self.metrics = metrics
@@ -98,6 +99,7 @@ class Trainer:
         self.device = device
         self.early_stopping = early_stopping
         self.lrscheduler = lrscheduler
+        self.quiet = quiet
 
         if self.lrscheduler:
             self._lrscheduler_metric_step = step_requires_metric(self.lrscheduler)
@@ -106,7 +108,7 @@ class Trainer:
     def fit(
         self, n_epochs, train_dataloader: DataLoader, valid_dataloader: DataLoader
     ) -> None:
-        for epoch in tqdm(range(n_epochs), colour="#1e4706"):
+        for epoch in tqdm(range(n_epochs), colour="#1e4706",disable=self.quiet):
             train_loss = self.train(train_dataloader)
 
             for metric in self.metrics:
@@ -151,7 +153,7 @@ class Trainer:
         self.model.train()
         train_loss: float = 0.0
         train_steps = len(dataloader)
-        for _ in tqdm(range(train_steps), colour="#1e4706"):
+        for _ in tqdm(range(train_steps), colour="#1e4706",disable=self.quiet):
             x, y = next(iter(dataloader))
             x, y = x.to(self.device), y.to(self.device)
 
