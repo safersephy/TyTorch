@@ -9,6 +9,7 @@ from ray import train
 from ray.train import Checkpoint
 from torch.utils.data import DataLoader
 from torcheval.metrics.metric import Metric
+from torchinfo import summary
 from tqdm import tqdm
 
 from tytorch.utils import step_requires_metric
@@ -90,7 +91,7 @@ class Trainer:
         device: str,
         early_stopping: Optional[EarlyStopping] = None,
         lrscheduler: torch.optim.lr_scheduler.LRScheduler = None,
-        quiet: bool = False
+        quiet: bool = False,
     ) -> None:
         self.model = model
         self.metrics = metrics
@@ -108,7 +109,12 @@ class Trainer:
     def fit(
         self, n_epochs, train_dataloader: DataLoader, valid_dataloader: DataLoader
     ) -> None:
-        for epoch in tqdm(range(n_epochs), colour="#1e4706",disable=self.quiet):
+        if not self.quiet:
+            summary(
+                self.model, input_size=tuple((next(iter(train_dataloader))[0]).shape)
+            )
+
+        for epoch in tqdm(range(n_epochs), colour="#1e4706", disable=self.quiet):
             train_loss = self.train(train_dataloader)
 
             for metric in self.metrics:
@@ -153,7 +159,7 @@ class Trainer:
         self.model.train()
         train_loss: float = 0.0
         train_steps = len(dataloader)
-        for _ in tqdm(range(train_steps), colour="#1e4706",disable=self.quiet):
+        for _ in tqdm(range(train_steps), colour="#1e4706", disable=self.quiet):
             x, y = next(iter(dataloader))
             x, y = x.to(self.device), y.to(self.device)
 

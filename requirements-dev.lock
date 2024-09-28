@@ -252,6 +252,8 @@ torch==2.4.1
     # via tytorch
 torcheval==0.0.7
     # via tytorch
+torchinfo==1.8.0
+    # via tytorch
 tornado==6.4.1
     # via ipykernel
     # via jupyter-client
@@ -264,6 +266,7 @@ traitlets==5.14.3
     # via jupyter-client
     # via jupyter-core
     # via matplotlib-inline
+types-requests==2.32.0.20240914
 typing-extensions==4.12.2
     # via alembic
     # via ipython
@@ -278,6 +281,7 @@ tzdata==2024.2
 urllib3==2.2.3
     # via docker
     # via requests
+    # via types-requests
 wcwidth==0.2.13
     # via prompt-toolkit
 werkzeug==3.0.4

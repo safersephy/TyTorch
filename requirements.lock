@@ -201,6 +201,8 @@ torch==2.4.1
     # via tytorch
 torcheval==0.0.7
     # via tytorch
+torchinfo==1.8.0
+    # via tytorch
 tqdm==4.66.5
     # via tytorch
 typing-extensions==4.12.2
