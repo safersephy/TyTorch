@@ -125,7 +125,7 @@ class FlowersDatasetFactory(DatasetFactory):
         return self.load()
 
 
-train_dataset, valid_dataset, test_dataset = FlowersDatasetFactory(
-   silver_folder = Path("./tytorch/examples/data/silver"),
-   silver_filename = "flowers.pt"
-).load()
+# train_dataset, valid_dataset, test_dataset = FlowersDatasetFactory(
+#    silver_folder = Path("./tytorch/examples/data/silver"),
+#    silver_filename = "flowers.pt"
+# ).load()
