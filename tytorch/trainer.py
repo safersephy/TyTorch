@@ -110,13 +110,13 @@ class Trainer:
         self, n_epochs, train_dataloader: DataLoader, valid_dataloader: DataLoader
     ) -> None:
         
-        self.model.to(self.device)
+
         
         if not self.quiet:
             summary(
-                self.model, input_size=tuple((next(iter(train_dataloader))[0].to(self.device)).shape)
+                self.model, input_size=tuple((next(iter(train_dataloader))[0]).shape)
             )
-
+        self.model.to(self.device)
         for epoch in tqdm(range(n_epochs), colour="#1e4706", disable=self.quiet):
             train_loss = self.train(train_dataloader)
 
