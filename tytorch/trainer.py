@@ -104,11 +104,14 @@ class Trainer:
 
         if self.lrscheduler:
             self._lrscheduler_metric_step = step_requires_metric(self.lrscheduler)
-        self.model.to(self.device)
+        
 
     def fit(
         self, n_epochs, train_dataloader: DataLoader, valid_dataloader: DataLoader
     ) -> None:
+        
+        self.model = self.model.to(self.device)
+        
         if not self.quiet:
             summary(
                 self.model, input_size=tuple((next(iter(train_dataloader))[0].to(self.device)).shape)
