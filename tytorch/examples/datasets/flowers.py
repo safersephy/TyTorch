@@ -3,36 +3,44 @@ import torch
 import numpy as np
 from tytorch.data import DatasetFactory, TyTorchDataset
 from tytorch.data_utils import iter_valid_paths,load_image,check_create_folder
+from dataclasses import dataclass
+
+@dataclass
+class FactorySettings():
+    source_url: str
+    bronze_folder: Path
+    bronze_filename: str
+    silver_folder: Path
+    silver_filename:str
+    unzip:bool
+    formats:list
+    valid_frac:float
+    test_frac:float
+    
+@dataclass
+class ImgFactorySettings(FactorySettings):
+    image_size: tuple
+    
+    
+    
+
 
 class FlowersDatasetFactory(DatasetFactory):
     def __init__(
-        self, 
-        bronze_folder = None, 
-        bronze_filename = None,        
-        silver_folder = None, 
-        test_fraction = None, 
-        val_fraction = None,
-        silver_filename = None,
-        image_size = None
+        self,       
+        settings: ImgFactorySettings
         ):
         super().__init__(
-            bronze_folder, 
-            bronze_filename
             )
+        self.settings = settings
 
-        self.test_fraction = test_fraction
-        self.val_fraction = val_fraction
-        self.image_size = image_size
-        self.silver_folder = silver_folder
-        self.silver_filename = silver_filename
 
     def transform(
         self, 
     ):
 
-        formats = ['.jpg','.png']
         paths_, class_names = iter_valid_paths(
-            self.bronze_folder / "flower_photos", formats=formats
+            self.settings.bronze_folder / "flower_photos", formats=self.settings.formats
         )
         
 
@@ -41,7 +49,7 @@ class FlowersDatasetFactory(DatasetFactory):
             "labels": [],
         }
         for path in paths_:
-            img = load_image(path, self.image_size)
+            img = load_image(path, self.settings.image_size)
             x_ = np.transpose(img, (2, 0, 1))
             x = torch.tensor(x_ / 255.0).type(torch.float32)  # type: ignore
             y = torch.tensor(class_names.index(path.parent.name))
@@ -54,7 +62,7 @@ class FlowersDatasetFactory(DatasetFactory):
         num_all_samples = len(all_data["data"])
         all_indices = torch.randperm(num_all_samples)
         
-        test_size = int(num_all_samples * self.test_fraction)
+        test_size = int(num_all_samples * self.settings.test_frac)
         train_size = num_all_samples - test_size
 
         train_indices = all_indices[:train_size]
@@ -68,7 +76,7 @@ class FlowersDatasetFactory(DatasetFactory):
         num_train_samples = len(traintest_data_split)
         split_indices = torch.randperm(num_train_samples) 
  
-        val_size = int(num_train_samples * self.val_fraction)
+        val_size = int(num_train_samples * self.settings.valid_frac)
         train_size = num_train_samples - val_size       
                
         train_indices = split_indices[:train_size]
@@ -89,8 +97,8 @@ class FlowersDatasetFactory(DatasetFactory):
             "testlabels": test_labels_split,
         }
 
-        check_create_folder(self.silver_folder)
-        torch.save(data, self.silver_folder / self.silver_filename)  
+        check_create_folder(self.settings.silver_folder)
+        torch.save(data, self.settings.silver_folder / self.settings.silver_filename)  
          
 
     def load(
@@ -100,7 +108,7 @@ class FlowersDatasetFactory(DatasetFactory):
         TyTorchDataset,
         TyTorchDataset,
     ]:
-        data = torch.load(self.silver_folder / self.silver_filename, weights_only=False)  # type: ignore
+        data = torch.load(self.settings.silver_folder / self.settings.silver_filename, weights_only=False)  # type: ignore
 
         train_data = data["traindata"]
         train_labels = data["trainlabels"]
@@ -117,15 +125,27 @@ class FlowersDatasetFactory(DatasetFactory):
 
     def create_datasets(self):
         self.extract(
-            source_url="https://storage.googleapis.com/download.tensorflow.org/example_images/flower_photos.tgz",
-            bronze_filename="flowers.tgz",
-            unzip=True,
+            self.settings.source_url,
+            self.settings.bronze_folder,
+            self.settings.bronze_filename,
+            self.settings.unzip
         )
-        self.transform(silver_filename="flowers.pt", image_size=(224, 224))
+        self.transform()
         return self.load()
 
 
-# train_dataset, valid_dataset, test_dataset = FlowersDatasetFactory(
-#    silver_folder = Path("./tytorch/examples/data/silver"),
-#    silver_filename = "flowers.pt"
-# ).load()
+flowers_factory_settings  = ImgFactorySettings(
+    source_url="https://storage.googleapis.com/download.tensorflow.org/example_images/flower_photos.tgz",
+    bronze_folder = Path("./tytorch/examples/data/bronze"), 
+    bronze_filename="flowers.tgz",
+    silver_folder = Path("./tytorch/examples/data/silver"),
+    silver_filename="flowers.pt", 
+    valid_frac=.2,
+    test_frac=.2,
+    unzip=True,
+    formats=['.jpg','.png'],
+    image_size=(224, 224)
+)
+
+train_dataset, valid_dataset, test_dataset = FlowersDatasetFactory(flowers_factory_settings
+).create_datasets()

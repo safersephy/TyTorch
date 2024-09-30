@@ -23,17 +23,17 @@ class TyTorchDataset(Dataset):
         return f"TyTorchDataset (len {len(self)})"
 
 class DatasetFactory(abc.ABC):
-    def __init__(
-        self, 
-        bronze_folder:str = None, 
-        bronze_filename:str = None,
-        ):
-        self.bronze_folder = bronze_folder
-        self.bronze_filename = bronze_filename
+    def __init__(self, ):
+        pass
 
-    def extract(self, source_url, bronze_filename, unzip):
+    def extract(self, 
+                source_url, 
+                bronze_folder,
+                bronze_filename, 
+                unzip):
         self.source_url = source_url
         self.bronze_filename = bronze_filename
+        self.bronze_folder = bronze_folder
         self.unzip = unzip
         self.overwrite = False
         if not self.bronze_folder.exists():
@@ -56,7 +56,7 @@ class DatasetFactory(abc.ABC):
         )
 
     @abc.abstractmethod
-    def transform(self, silver_filename: str) -> None:
+    def transform(self) -> None:
         """
         Transform the extracted data and save it to the silver_folder.
         This method must be implemented by the concrete subclass.
@@ -70,8 +70,9 @@ class DatasetFactory(abc.ABC):
         This method must be implemented by the concrete subclass.
         """
         pass
-
-    def create_datasets(self):
+    
+    @abc.abstractmethod
+    def create_datasets(self, source_url, bronze_filename, unzip):
         self.extract(self.source_url, self.bronze_filename, self.unzip)
-        self.transform(self.silver_filename)
+        self.transform()
         return self.load()
