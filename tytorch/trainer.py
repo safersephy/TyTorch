@@ -110,7 +110,7 @@ class Trainer:
         self, n_epochs, train_dataloader: DataLoader, valid_dataloader: DataLoader
     ) -> None:
         
-        self.model = self.model.to(self.device)
+        self.model.to(self.device)
         
         if not self.quiet:
             summary(
