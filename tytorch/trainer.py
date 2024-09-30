@@ -111,7 +111,7 @@ class Trainer:
     ) -> None:
         if not self.quiet:
             summary(
-                self.model.to("cpu"), input_size=tuple((next(iter(train_dataloader))[0]).shape)
+                self.model, input_size=tuple((next(iter(train_dataloader))[0].to(self.device)).shape)
             )
 
         for epoch in tqdm(range(n_epochs), colour="#1e4706", disable=self.quiet):
