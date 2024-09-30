@@ -22,9 +22,6 @@ class TyTorchDataset(Dataset):
     def __repr__(self) -> str:
         return f"TyTorchDataset (len {len(self)})"
 
-
-
-
 class DatasetFactory(abc.ABC):
     def __init__(
         self, 

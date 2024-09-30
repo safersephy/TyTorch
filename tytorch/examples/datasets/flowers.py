@@ -23,8 +23,8 @@ class FlowersDatasetFactory(DatasetFactory):
         self.test_fraction = test_fraction
         self.val_fraction = val_fraction
         self.image_size = image_size
-        self.silver_folder=silver_folder
-        self.silver_filename=silver_filename
+        self.silver_folder = silver_folder
+        self.silver_filename = silver_filename
 
     def transform(
         self, 
