@@ -104,7 +104,7 @@ class Trainer:
 
         if self.lrscheduler:
             self._lrscheduler_metric_step = step_requires_metric(self.lrscheduler)
-        model = model.to(self.device)
+        model.to(self.device)
 
     def fit(
         self, n_epochs, train_dataloader: DataLoader, valid_dataloader: DataLoader
