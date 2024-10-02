@@ -58,17 +58,17 @@ class FlowersDatasetFactory(DatasetFactory):
             "labels": [],
         }
         for path in paths_:
-            
-            img = Image.open(path)  # Open image using PIL
-            label = torch.tensor(class_names.index(path.parent.name))
+            for i in range(5):
+                img = Image.open(path)  # Open image using PIL
+                label = torch.tensor(class_names.index(path.parent.name))
 
-            # Apply transformations
-            augmented_img = augmentation_transform(img)
-            #x_augmented = augmented_img  / 255.0  # Normalize manually
-            x_augmented_tensor = torch.tensor(augmented_img).type(torch.float32) # Create tensor from the original image
+                # Apply transformations
+                augmented_img = augmentation_transform(img)
+                #x_augmented = augmented_img  / 255.0  # Normalize manually
+                x_augmented_tensor = torch.tensor(augmented_img).type(torch.float32) # Create tensor from the original image
 
-            all_data["data"].append(x_augmented_tensor)
-            all_data["labels"].append(label)
+                all_data["data"].append(x_augmented_tensor)
+                all_data["labels"].append(label)
 
             img = load_image(path, self.settings.image_size)
             x_ = np.transpose(img, (2, 0, 1))
@@ -168,5 +168,5 @@ flowers_factory_settings  = ImgFactorySettings(
     image_size=(224, 224)
 )
 
-train_dataset, valid_dataset, test_dataset = FlowersDatasetFactory(flowers_factory_settings
-).create_datasets()
+# train_dataset, valid_dataset, test_dataset = FlowersDatasetFactory(flowers_factory_settings
+# ).create_datasets()
