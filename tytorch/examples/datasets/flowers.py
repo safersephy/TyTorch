@@ -4,6 +4,8 @@ import numpy as np
 from tytorch.data import DatasetFactory, TyTorchDataset
 from tytorch.data_utils import iter_valid_paths,load_image,check_create_folder
 from dataclasses import dataclass
+from torchvision import transforms
+from PIL import Image
 
 @dataclass
 class FactorySettings():
@@ -42,13 +44,32 @@ class FlowersDatasetFactory(DatasetFactory):
         paths_, class_names = iter_valid_paths(
             self.settings.bronze_folder / "flower_photos", formats=self.settings.formats
         )
-        
+  
+        # Define your augmentation transformations
+        augmentation_transform = transforms.Compose([
+            transforms.RandomResizedCrop(224),
+            transforms.RandomHorizontalFlip(),
+            transforms.ToTensor(),
+            transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+        ])      
 
         all_data = {
             "data": [],
             "labels": [],
         }
         for path in paths_:
+            
+            img = Image.open(path)  # Open image using PIL
+            label = torch.tensor(class_names.index(path.parent.name))
+
+            # Apply transformations
+            augmented_img = augmentation_transform(img)
+            #x_augmented = augmented_img  / 255.0  # Normalize manually
+            x_augmented_tensor = torch.tensor(augmented_img).type(torch.float32) # Create tensor from the original image
+
+            all_data["data"].append(x_augmented_tensor)
+            all_data["labels"].append(label)
+
             img = load_image(path, self.settings.image_size)
             x_ = np.transpose(img, (2, 0, 1))
             x = torch.tensor(x_ / 255.0).type(torch.float32)  # type: ignore

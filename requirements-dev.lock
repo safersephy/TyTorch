@@ -148,6 +148,7 @@ numpy==2.1.1
     # via pyarrow
     # via scikit-learn
     # via scipy
+    # via torchvision
 opentelemetry-api==1.16.0
     # via mlflow-skinny
     # via opentelemetry-sdk
@@ -169,6 +170,7 @@ pexpect==4.9.0
     # via ipython
 pillow==10.4.0
     # via matplotlib
+    # via torchvision
 platformdirs==4.3.3
     # via jupyter-core
 prompt-toolkit==3.0.47
@@ -249,10 +251,13 @@ sympy==1.13.3
 threadpoolctl==3.5.0
     # via scikit-learn
 torch==2.4.1
+    # via torchvision
     # via tytorch
 torcheval==0.0.7
     # via tytorch
 torchinfo==1.8.0
+    # via tytorch
+torchvision==0.19.1
     # via tytorch
 tornado==6.4.1
     # via ipykernel

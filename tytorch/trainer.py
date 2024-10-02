@@ -108,10 +108,7 @@ class Trainer:
 
     def fit(
         self, n_epochs, train_dataloader: DataLoader, valid_dataloader: DataLoader
-    ) -> None:
-        
-
-        
+    ) -> None:        
         if not self.quiet:
             summary(
                 self.model, input_size=tuple((next(iter(train_dataloader))[0]).shape)

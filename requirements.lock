@@ -121,6 +121,7 @@ numpy==2.1.1
     # via pyarrow
     # via scikit-learn
     # via scipy
+    # via torchvision
 opentelemetry-api==1.16.0
     # via mlflow-skinny
     # via opentelemetry-sdk
@@ -137,6 +138,7 @@ pandas==2.2.3
     # via mlflow
 pillow==10.4.0
     # via matplotlib
+    # via torchvision
 protobuf==5.28.2
     # via mlflow-skinny
     # via ray
@@ -198,10 +200,13 @@ sympy==1.13.3
 threadpoolctl==3.5.0
     # via scikit-learn
 torch==2.4.1
+    # via torchvision
     # via tytorch
 torcheval==0.0.7
     # via tytorch
 torchinfo==1.8.0
+    # via tytorch
+torchvision==0.19.1
     # via tytorch
 tqdm==4.66.5
     # via tytorch
