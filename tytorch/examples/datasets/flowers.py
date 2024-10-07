@@ -112,7 +112,7 @@ class FlowersDatasetFactory(DatasetFactory):
             for i in range(5):
 
                 # Apply transformations
-                augmented_img = augmentation_transform(img)
+                augmented_img = augmentation_transform(img.permute(1, 2, 0))
                 #x_augmented = augmented_img  / 255.0  # Normalize manually
                 x_augmented_tensor = torch.tensor(augmented_img).type(torch.float32) # Create tensor from the original image
 
