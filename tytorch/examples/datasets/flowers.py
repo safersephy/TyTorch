@@ -109,10 +109,12 @@ class FlowersDatasetFactory(DatasetFactory):
             augmented_train_data.append(img)
             augmented_train_labels.append(label)
 
+
             for i in range(5):
 
                 # Apply transformations
-                augmented_img = augmentation_transform(img.permute(1, 2, 0))
+                img = transforms.ToPILImage()(img)
+                augmented_img = augmentation_transform(img)
                 #x_augmented = augmented_img  / 255.0  # Normalize manually
                 x_augmented_tensor = torch.tensor(augmented_img).type(torch.float32) # Create tensor from the original image
 
