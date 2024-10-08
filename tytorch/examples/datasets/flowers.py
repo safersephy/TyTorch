@@ -111,7 +111,7 @@ class FlowersDatasetFactory(DatasetFactory):
 
             img = transforms.ToPILImage()(img)
 
-            for i in range(5):
+            for i in range(2):
 
                 # Apply transformations
                 
