@@ -90,45 +90,45 @@ class FlowersDatasetFactory(DatasetFactory):
         val_data_split = traintest_data_split[val_indices]
         val_labels_split = traintest_labels_split[val_indices]            
         
-        # Define your augmentation transformations
-        augmentation_transform = transforms.Compose([
-            transforms.RandomResizedCrop(224),
-            transforms.RandomHorizontalFlip(),
-            transforms.ToTensor(),
-            transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
-        ])              
+        # # Define your augmentation transformations
+        # augmentation_transform = transforms.Compose([
+        #     transforms.RandomResizedCrop(224),
+        #     transforms.RandomHorizontalFlip(),
+        #     transforms.ToTensor(),
+        #     transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+        # ])              
 
-        augmented_train_data = []
-        augmented_train_labels = []
+        # augmented_train_data = []
+        # augmented_train_labels = []
 
-        # Apply augmentation to training data only
-        for i in range(len(train_data_split)):
-            img = train_data_split[i]
-            label = train_labels_split[i]
+        # # Apply augmentation to training data only
+        # for i in range(len(train_data_split)):
+        #     img = train_data_split[i]
+        #     label = train_labels_split[i]
 
-            augmented_train_data.append(img)
-            augmented_train_labels.append(label)
+        #     augmented_train_data.append(img)
+        #     augmented_train_labels.append(label)
 
-            img = transforms.ToPILImage()(img)
+        #     img = transforms.ToPILImage()(img)
 
-            for i in range(2):
+        #     for i in range(2):
 
-                # Apply transformations
+        #         # Apply transformations
                 
-                augmented_img = augmentation_transform(img)
-                #x_augmented = augmented_img  / 255.0  # Normalize manually
-                x_augmented_tensor = torch.tensor(augmented_img).type(torch.float32) # Create tensor from the original image
+        #         augmented_img = augmentation_transform(img)
+        #         #x_augmented = augmented_img  / 255.0  # Normalize manually
+        #         x_augmented_tensor = torch.tensor(augmented_img).type(torch.float32) # Create tensor from the original image
 
-                augmented_train_data.append(x_augmented_tensor)
-                augmented_train_labels.append(label)
+        #         augmented_train_data.append(x_augmented_tensor)
+        #         augmented_train_labels.append(label)
 
-        # Stack the augmented data and convert back to tensors
-        augmented_train_data = torch.stack(augmented_train_data)
-        augmented_train_labels = torch.tensor(augmented_train_labels)
+        # # Stack the augmented data and convert back to tensors
+        # augmented_train_data = torch.stack(augmented_train_data)
+        # augmented_train_labels = torch.tensor(augmented_train_labels)
 
         data = {
-            "traindata": augmented_train_data,
-            "trainlabels": augmented_train_labels,
+            "traindata": train_data_split,
+            "trainlabels": train_labels_split,
             "validdata": val_data_split,
             "validlabels": val_labels_split,
             "testdata": test_data_split,
