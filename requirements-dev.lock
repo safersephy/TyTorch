@@ -25,6 +25,8 @@ asttokens==2.4.1
 attrs==24.2.0
     # via jsonschema
     # via referencing
+backports-tarfile==1.2.0
+    # via jaraco-context
 blinker==1.8.2
     # via flask
 cachetools==5.5.0
@@ -39,6 +41,7 @@ click==8.1.7
     # via mlflow-skinny
     # via ray
 cloudpickle==3.0.0
+    # via hyperopt
     # via mlflow-skinny
 comm==0.2.2
     # via ipykernel
@@ -70,6 +73,8 @@ frozenlist==1.4.1
     # via ray
 fsspec==2024.9.0
     # via torch
+future==1.0.0
+    # via hyperopt
 gitdb==4.0.11
     # via gitpython
 gitpython==3.1.43
@@ -85,15 +90,23 @@ graphql-relay==3.2.0
     # via graphene
 gunicorn==23.0.0
     # via mlflow
+hyperopt==0.2.7
 idna==3.10
     # via requests
 importlib-metadata==8.5.0
+    # via keyring
     # via mlflow-skinny
 ipykernel==6.29.5
 ipython==8.27.0
     # via ipykernel
 itsdangerous==2.2.0
     # via flask
+jaraco-classes==3.4.0
+    # via keyring
+jaraco-context==6.0.1
+    # via keyring
+jaraco-functools==4.1.0
+    # via keyring
 jedi==0.19.1
     # via ipython
 jinja2==3.1.4
@@ -111,10 +124,14 @@ jupyter-client==8.6.2
 jupyter-core==5.7.2
     # via ipykernel
     # via jupyter-client
+keyring==25.4.1
+    # via mads-datasets
 kiwisolver==1.4.7
     # via matplotlib
 loguru==0.7.2
+    # via mads-datasets
     # via tytorch
+mads-datasets==0.3.12
 mako==1.3.5
     # via alembic
 markdown==3.7
@@ -132,6 +149,9 @@ mlflow==2.16.2
     # via tytorch
 mlflow-skinny==2.16.2
     # via mlflow
+more-itertools==10.5.0
+    # via jaraco-classes
+    # via jaraco-functools
 mpmath==1.3.0
     # via sympy
 msgpack==1.1.0
@@ -139,9 +159,12 @@ msgpack==1.1.0
 nest-asyncio==1.6.0
     # via ipykernel
 networkx==3.3
+    # via hyperopt
     # via torch
 numpy==2.1.1
     # via contourpy
+    # via hyperopt
+    # via mads-datasets
     # via matplotlib
     # via mlflow
     # via pandas
@@ -163,16 +186,21 @@ packaging==24.1
     # via mlflow-skinny
     # via ray
 pandas==2.2.3
+    # via mads-datasets
     # via mlflow
 parso==0.8.4
     # via jedi
 pexpect==4.9.0
     # via ipython
 pillow==10.4.0
+    # via mads-datasets
     # via matplotlib
     # via torchvision
 platformdirs==4.3.3
     # via jupyter-core
+polars==1.9.0
+    # via mads-datasets
+    # via tytorch
 prompt-toolkit==3.0.47
     # via ipython
 protobuf==5.28.2
@@ -184,6 +212,8 @@ ptyprocess==0.7.0
     # via pexpect
 pure-eval==0.2.3
     # via stack-data
+py4j==0.10.9.7
+    # via hyperopt
 pyarrow==17.0.0
     # via mlflow
 pyasn1==0.6.1
@@ -192,6 +222,7 @@ pyasn1==0.6.1
 pyasn1-modules==0.4.1
     # via google-auth
 pydantic==2.9.1
+    # via mads-datasets
     # via tytorch
 pydantic-core==2.23.3
     # via pydantic
@@ -219,6 +250,7 @@ referencing==0.35.1
 requests==2.32.3
     # via databricks-sdk
     # via docker
+    # via mads-datasets
     # via mlflow-skinny
     # via ray
 rpds-py==0.20.0
@@ -229,6 +261,7 @@ rsa==4.9
 scikit-learn==1.5.2
     # via mlflow
 scipy==1.14.1
+    # via hyperopt
     # via mlflow
     # via scikit-learn
 setuptools==75.1.0
@@ -236,6 +269,7 @@ setuptools==75.1.0
     # via opentelemetry-sdk
 six==1.16.0
     # via asttokens
+    # via hyperopt
     # via python-dateutil
 smmap==5.0.1
     # via gitdb
@@ -263,6 +297,8 @@ tornado==6.4.1
     # via ipykernel
     # via jupyter-client
 tqdm==4.66.5
+    # via hyperopt
+    # via mads-datasets
     # via tytorch
 traitlets==5.14.3
     # via comm

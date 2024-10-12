@@ -1,5 +1,6 @@
 import inspect
 import pickle
+from typing import Any, Dict
 
 import torch
 from loguru import logger
@@ -7,7 +8,7 @@ from loguru import logger
 
 def get_device() -> str:
     if torch.backends.mps.is_available() and torch.backends.mps.is_built():
-        device = torch.device("mps")
+        device = "mps"
         logger.info("Using MPS")
     elif torch.cuda.is_available():
         device = "cuda:0"
@@ -18,7 +19,7 @@ def get_device() -> str:
     return device
 
 
-def save_params_to_disk(params: dict, file_path: str):
+def save_params_to_disk(params: Dict[str, Any], file_path: str) -> None:
     """Save the params dictionary (with class references) to a pickle file on disk."""
     try:
         with open(file_path, "wb") as pickle_file:
@@ -28,7 +29,7 @@ def save_params_to_disk(params: dict, file_path: str):
         print(f"Error saving params to disk: {e}")
 
 
-def load_params_from_disk(file_path: str) -> dict:
+def load_params_from_disk(file_path: str) -> Dict[str, Any]:
     """Load the params dictionary (with class references) from a pickle file on disk."""
     try:
         with open(file_path, "rb") as pickle_file:
@@ -40,7 +41,7 @@ def load_params_from_disk(file_path: str) -> dict:
         return {}
 
 
-def step_requires_metric(obj):
+def step_requires_metric(obj: Any) -> bool:
     sig = inspect.signature(obj.step)
 
     for param in sig.parameters.values():

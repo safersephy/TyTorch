@@ -139,6 +139,8 @@ pandas==2.2.3
 pillow==10.4.0
     # via matplotlib
     # via torchvision
+polars==1.9.0
+    # via tytorch
 protobuf==5.28.2
     # via mlflow-skinny
     # via ray

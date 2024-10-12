@@ -12,7 +12,7 @@ from torcheval.metrics.metric import Metric
 from torchinfo import summary
 from tqdm import tqdm
 
-from tytorch.utils import step_requires_metric
+from tytorch.utils.trainer_utils import step_requires_metric
 
 
 class EarlyStopping:
@@ -22,7 +22,7 @@ class EarlyStopping:
         min_delta: float = 0.0,
         save: bool = True,
         mode: str = "min",
-    ):
+    ) -> None:
         """
         Args:
             patience (int): How many epochs to wait after last improvement.
@@ -90,7 +90,7 @@ class Trainer:
         optimizer: torch.optim.Optimizer,
         device: str,
         early_stopping: Optional[EarlyStopping] = None,
-        lrscheduler: torch.optim.lr_scheduler.LRScheduler = None,
+        lrscheduler: Optional[torch.optim.lr_scheduler.LRScheduler] = None,
         quiet: bool = False,
     ) -> None:
         self.model = model
@@ -104,11 +104,13 @@ class Trainer:
 
         if self.lrscheduler:
             self._lrscheduler_metric_step = step_requires_metric(self.lrscheduler)
-        
 
     def fit(
-        self, n_epochs, train_dataloader: DataLoader, valid_dataloader: DataLoader
-    ) -> None:        
+        self,
+        n_epochs: int,
+        train_dataloader: DataLoader,
+        valid_dataloader: DataLoader,
+    ) -> None:
         if not self.quiet:
             summary(
                 self.model, input_size=tuple((next(iter(train_dataloader))[0]).shape)

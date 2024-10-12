@@ -1,5 +1,6 @@
-from torcheval.metrics.metric import Metric
 import torch
+from torcheval.metrics.metric import Metric
+
 
 class MASE(Metric):
     def __init__(self, seasonality: int = 1):
@@ -14,7 +15,9 @@ class MASE(Metric):
             raise ValueError("Predictions and targets must have the same shape")
         absolute_error = torch.abs(preds - target)
         self.absolute_errors += torch.sum(absolute_error)
-        scale = torch.mean(torch.abs(target[self.seasonality:] - target[:-self.seasonality]))
+        scale = torch.mean(
+            torch.abs(target[self.seasonality :] - target[: -self.seasonality])
+        )
         if scale == 0:
             scale = torch.tensor(1.0)
         self.scale += scale

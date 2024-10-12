@@ -8,4 +8,4 @@ format:
 	ruff format tytorch
 lint:
 	ruff check tytorch --fix
-	mypy tytorch  --ignore-missing-imports
+	mypy tytorch  --ignore-missing-imports --disallow-untyped-defs

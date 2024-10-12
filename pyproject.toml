@@ -15,6 +15,7 @@ dependencies = [
     "tqdm>=4.66.5",
     "torchinfo>=1.8.0",
     "torchvision>=0.19.1",
+    "polars>=1.9.0",
 ]
 readme = "README.md"
 requires-python = ">= 3.11.5"
@@ -28,6 +29,8 @@ managed = true
 dev-dependencies = [
     "ipykernel",
     "types-requests>=2.32.0.20240914",
+    "hyperopt>=0.2.7",
+    "mads-datasets>=0.3.12",
 ]
 
 [tool.ruff.lint]

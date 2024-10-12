@@ -9,4 +9,10 @@ wheels/
 # venv
 .venv
 
-tytorch/examples/data
+tytorch/examples/data/*
+tytorch/examples/traintune/tytorch/examples/data/*
+mlflow.db
+mlruns/
+earlystopping/
+ray_tuning_results/
+*.DS_Store
