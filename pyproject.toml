@@ -1,9 +1,10 @@
 [project]
 name = "tytorch"
-version = "0.71"
-description = "A simple trainer for pytorch"
+version = "0.8"
+description = "Based on a fork of the amazing mltrainer and mads_datasets by R. Grouls, 
+tytorch is an opinionated base for working with data for and training with pytorch"
 authors = [
-    { name = "SaferSephy" }
+    { name = "Tijs van der Velden" }
 ]
 dependencies = [
     "loguru",
