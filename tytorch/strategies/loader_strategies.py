@@ -6,8 +6,8 @@ import pandas as pd
 import polars as pl
 import torch
 
-from tytorch.utils.data import download_data, iter_valid_paths, load_image
 from tytorch.datapipeline import DataLoadingStrategy
+from tytorch.utils.data import download_data, iter_valid_paths, load_image
 
 DatasetDataType = torch.Tensor | np.ndarray | List | pd.DataFrame | pl.DataFrame | None
 DatasetLabelType = torch.Tensor | np.ndarray | List | pd.DataFrame | None
