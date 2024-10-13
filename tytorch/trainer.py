@@ -184,7 +184,7 @@ class Trainer:
         for _ in range(len(dataloader)):
             x, y = next(iter(dataloader))
             x, y = x.to(self.device), y.to(self.device)
-            yhat = self.model(x)
+            yhat = self.model(x).squeeze(-1)
             valid_loss += self.loss_fn(yhat, y).cpu().detach().numpy()
             y = y
             yhat = yhat
