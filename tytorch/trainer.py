@@ -167,7 +167,7 @@ class Trainer:
 
             self.optimizer.zero_grad()
 
-            yhat = self.model(x)
+            yhat = self.model(x).squeeze(-1)
             loss = self.loss_fn(yhat, y)
             loss.backward()
             self.optimizer.step()
