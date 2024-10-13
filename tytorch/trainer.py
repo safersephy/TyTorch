@@ -186,6 +186,9 @@ class Trainer:
             x, y = x.to(self.device), y.to(self.device)
             yhat = self.model(x).squeeze(-1)
             valid_loss += self.loss_fn(yhat, y).cpu().detach().numpy()
+            
+            print(yhat)
+            print(y)
             y = y
             yhat = yhat
             for metric in self.metrics:
