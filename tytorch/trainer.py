@@ -187,10 +187,6 @@ class Trainer:
             yhat = self.model(x).squeeze(-1)
             valid_loss += self.loss_fn(yhat, y).cpu().detach().numpy()
             
-            print(yhat.shape)
-            print(y.shape)
-            y = y
-            yhat = yhat
             for metric in self.metrics:
                 metric.update(yhat, y)
 
