@@ -92,6 +92,8 @@ class Trainer:
         early_stopping: Optional[EarlyStopping] = None,
         lrscheduler: Optional[torch.optim.lr_scheduler.LRScheduler] = None,
         quiet: bool = False,
+        train_steps: Optional[int] = None,
+        valid_steps: Optional[int] = None,
     ) -> None:
         self.model = model
         self.metrics = metrics
@@ -101,6 +103,8 @@ class Trainer:
         self.early_stopping = early_stopping
         self.lrscheduler = lrscheduler
         self.quiet = quiet
+        self.train_steps = train_steps
+        self.valid_steps = valid_steps
 
         if self.lrscheduler:
             self._lrscheduler_metric_step = step_requires_metric(self.lrscheduler)
@@ -160,37 +164,41 @@ class Trainer:
     def train(self, dataloader: DataLoader) -> float:
         self.model.train()
         train_loss: float = 0.0
-        train_steps = len(dataloader)
-        for _ in tqdm(range(train_steps), colour="#1e4706", disable=self.quiet):
+        if not self.train_steps:
+            self.train_steps = len(dataloader)
+            
+        for _ in tqdm(range(self.train_steps), colour="#1e4706", disable=self.quiet):
             x, y = next(iter(dataloader))
             x, y = x.to(self.device), y.to(self.device)
 
             self.optimizer.zero_grad()
 
-            yhat = self.model(x).squeeze(-1)
+            yhat = self.model(x)
             loss = self.loss_fn(yhat, y)
             loss.backward()
             self.optimizer.step()
             train_loss += loss.cpu().detach().numpy()
-        train_loss /= train_steps
+        train_loss /= self.train_steps
 
         return train_loss
 
     def evaluate(self, dataloader: DataLoader) -> Tuple[Dict[str, float], float]:
         self.model.eval()
-        valid_steps = len(dataloader)
+        if not self.valid_steps:
+            self.valid_steps = len(dataloader)
         valid_loss: float = 0.0
 
-        for _ in range(len(dataloader)):
+        for _ in tqdm(range(self.valid_steps), colour="#1e4706", disable=self.quiet):
             x, y = next(iter(dataloader))
             x, y = x.to(self.device), y.to(self.device)
-            yhat = self.model(x).squeeze(-1)
+            yhat = self.model(x)
             valid_loss += self.loss_fn(yhat, y).cpu().detach().numpy()
-            
+            y = y
+            yhat = yhat
             for metric in self.metrics:
                 metric.update(yhat, y)
 
-        valid_loss /= valid_steps
+        valid_loss /= self.valid_steps
 
         with tempfile.TemporaryDirectory() as temp_checkpoint_dir:
             checkpoint = None
