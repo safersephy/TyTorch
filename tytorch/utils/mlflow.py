@@ -25,7 +25,7 @@ def set_mlflow_experiment(
 
 
 def set_best_run_tag_and_log_model(
-    experiment_name: str, model: nn.Module, metric_name: str, direction: str = "max"
+    experiment_name: str, model: nn.Module, metric_name: str, direction: str = "max",log_model: bool = False
 ) -> None:
     """
     Finds the run with the best metric result in an MLflow experiment (by name), sets a tag 'best_run=True',
@@ -85,13 +85,14 @@ def set_best_run_tag_and_log_model(
         )
 
         # Log the PyTorch model to the best run
-        with mlflow.start_run(best_run.info.run_id):
-            mlflow.pytorch.log_model(
-                pytorch_model=model, artifact_path="logged_models/model"
-            )
-            logger.info(
-                f"Model has been logged to experimen {experiment_name}, run {best_run.info.run_id}."
-            )
+        if log_model:
+            with mlflow.start_run(best_run.info.run_id):
+                mlflow.pytorch.log_model(
+                    pytorch_model=model, artifact_path="logged_models/model"
+                )
+                logger.info(
+                    f"Model has been logged to experiment {experiment_name}, run {best_run.info.run_id}."
+                )
     else:
         logger.info(f"No valid runs found with the metric '{metric_name}'.")
 

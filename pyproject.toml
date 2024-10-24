@@ -1,6 +1,6 @@
 [project]
 name = "tytorch"
-version = "0.8.3"
+version = "0.8.4"
 description = "Based on a fork of the amazing mltrainer and mads_datasets by R. Grouls, tytorch is an opinionated base for working with data for and training with pytorch."
 authors = [
     { name = "Tijs van der Velden" }
