@@ -9,12 +9,16 @@ from torch import nn
 from tytorch.utils.trainer_utils import load_params_from_disk
 
 
-def set_mlflow_experiment(experiment_name: str, add_timestamp: bool = True) -> str:
+def set_mlflow_experiment(
+    experiment_name: str, 
+    add_timestamp: bool = True,
+    tracking_uri:str = "sqlite:///mlflow.db"
+) -> str:
     if add_timestamp:
         timestamp = datetime.now().strftime("%Y-%m-%d-%H:%M:%S")
         experiment_name = f"{experiment_name}-{timestamp}"
 
-    mlflow.set_tracking_uri("sqlite:///mlflow.db")
+    mlflow.set_tracking_uri(tracking_uri)
     mlflow.set_experiment(experiment_name)
 
     return experiment_name
