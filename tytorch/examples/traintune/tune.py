@@ -21,6 +21,7 @@ from tytorch.strategies.loader_strategies import ImageTensorLoaderStrategy
 from tytorch.trainer import Trainer
 from tytorch.utils.mlflow import set_best_run_tag_and_log_model, set_mlflow_experiment
 
+#initial params
 tuningmetric = "valid_loss"
 tuninggoal = "min"
 n_trials = 60
