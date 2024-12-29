@@ -10,9 +10,9 @@ from tytorch.utils.trainer_utils import load_params_from_disk
 
 
 def set_mlflow_experiment(
-    experiment_name: str, 
+    experiment_name: str,
     add_timestamp: bool = True,
-    tracking_uri:str = "sqlite:///mlflow.db"
+    tracking_uri: str = "sqlite:///mlflow.db",
 ) -> str:
     if add_timestamp:
         timestamp = datetime.now().strftime("%Y-%m-%d-%H:%M:%S")
@@ -25,7 +25,11 @@ def set_mlflow_experiment(
 
 
 def set_best_run_tag_and_log_model(
-    experiment_name: str, model: nn.Module, metric_name: str, direction: str = "max",log_model: bool = False
+    experiment_name: str,
+    model: nn.Module,
+    metric_name: str,
+    direction: str = "max",
+    log_model: bool = False,
 ) -> None:
     """
     Finds the run with the best metric result in an MLflow experiment (by name), sets a tag 'best_run=True',

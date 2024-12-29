@@ -9,7 +9,6 @@ from ray import train
 from ray.train import Checkpoint
 from torch.utils.data import DataLoader
 from torcheval.metrics.metric import Metric
-from torchinfo import summary
 from tqdm import tqdm
 
 from tytorch.utils.trainer_utils import step_requires_metric
@@ -115,10 +114,10 @@ class Trainer:
         train_dataloader: DataLoader,
         valid_dataloader: DataLoader,
     ) -> None:
-        if not self.quiet:
-            summary(
-                self.model, input_size=tuple((next(iter(train_dataloader))[0]).shape)
-            )
+        # if not self.quiet:
+        #     summary(
+        #         self.model, input_size=tuple((next(iter(train_dataloader))[0]).shape)
+        #     )
         self.model.to(self.device)
         for epoch in tqdm(range(n_epochs), colour="#1e4706", disable=self.quiet):
             train_loss = self.train(train_dataloader)
@@ -166,14 +165,19 @@ class Trainer:
         train_loss: float = 0.0
         if not self.train_steps:
             self.train_steps = len(dataloader)
-            
+
         for _ in tqdm(range(self.train_steps), colour="#1e4706", disable=self.quiet):
-            x, y = next(iter(dataloader))
+            x, y, *extra = next(iter(dataloader))
             x, y = x.to(self.device), y.to(self.device)
+
+            lengths = extra[0] if extra else None  # Extract lengths if present
 
             self.optimizer.zero_grad()
 
-            yhat = self.model(x)
+            if lengths is not None:
+                yhat = self.model(x, lengths)
+            else:
+                yhat = self.model(x)
             loss = self.loss_fn(yhat, y)
             loss.backward()
             self.optimizer.step()
@@ -189,9 +193,15 @@ class Trainer:
         valid_loss: float = 0.0
 
         for _ in tqdm(range(self.valid_steps), colour="#1e4706", disable=self.quiet):
-            x, y = next(iter(dataloader))
+            x, y, *extra = next(iter(dataloader))
             x, y = x.to(self.device), y.to(self.device)
-            yhat = self.model(x)
+
+            lengths = extra[0] if extra else None  # Extract lengths if present
+
+            if lengths is not None:
+                yhat = self.model(x, lengths)
+            else:
+                yhat = self.model(x)
             valid_loss += self.loss_fn(yhat, y).cpu().detach().numpy()
             y = y
             yhat = yhat

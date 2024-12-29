@@ -10,6 +10,8 @@
 #   universal: false
 
 -e file:.
+absl-py==2.1.0
+    # via tensorboard
 aiosignal==1.3.1
     # via ray
 alembic==1.13.3
@@ -88,6 +90,8 @@ graphql-core==3.2.4
     # via graphql-relay
 graphql-relay==3.2.0
     # via graphene
+grpcio==1.67.0
+    # via tensorboard
 gunicorn==23.0.0
     # via mlflow
 hyperopt==0.2.7
@@ -131,11 +135,12 @@ kiwisolver==1.4.7
 loguru==0.7.2
     # via mads-datasets
     # via tytorch
-mads-datasets==0.3.12
+mads-datasets==0.3.14
 mako==1.3.5
     # via alembic
 markdown==3.7
     # via mlflow
+    # via tensorboard
 markupsafe==2.1.5
     # via jinja2
     # via mako
@@ -171,6 +176,7 @@ numpy==2.1.1
     # via pyarrow
     # via scikit-learn
     # via scipy
+    # via tensorboard
     # via torchvision
 opentelemetry-api==1.16.0
     # via mlflow-skinny
@@ -185,6 +191,7 @@ packaging==24.1
     # via matplotlib
     # via mlflow-skinny
     # via ray
+    # via tensorboard
 pandas==2.2.3
     # via mads-datasets
     # via mlflow
@@ -206,6 +213,7 @@ prompt-toolkit==3.0.47
 protobuf==5.28.2
     # via mlflow-skinny
     # via ray
+    # via tensorboard
 psutil==6.0.0
     # via ipykernel
 ptyprocess==0.7.0
@@ -267,10 +275,12 @@ scipy==1.14.1
 setuptools==75.1.0
     # via opentelemetry-api
     # via opentelemetry-sdk
+    # via tensorboard
 six==1.16.0
     # via asttokens
     # via hyperopt
     # via python-dateutil
+    # via tensorboard
 smmap==5.0.1
     # via gitdb
 sqlalchemy==2.0.35
@@ -282,6 +292,9 @@ stack-data==0.6.3
     # via ipython
 sympy==1.13.3
     # via torch
+tensorboard==2.18.0
+tensorboard-data-server==0.7.2
+    # via tensorboard
 threadpoolctl==3.5.0
     # via scikit-learn
 torch==2.4.1
@@ -327,6 +340,7 @@ wcwidth==0.2.13
     # via prompt-toolkit
 werkzeug==3.0.4
     # via flask
+    # via tensorboard
 wrapt==1.16.0
     # via deprecated
 zipp==3.20.2

@@ -13,6 +13,11 @@ tytorch/examples/data/*
 tytorch/examples/traintune/tytorch/examples/data/*
 mlflow.db
 mlruns/
+models/
+logs/
+img/
+data/
+.vscode/
 earlystopping/
 ray_tuning_results/
 *.DS_Store

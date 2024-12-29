@@ -267,8 +267,11 @@ def walk_dir(path: Path) -> Iterator[Path]:
 
 
 def iter_valid_paths(
-    path: Path, formats: List[str]
-) -> Tuple[Iterator[Path], List[str]]:
+    path: Path,
+    formats: List[str],
+    paths_as_iterator: bool = True,
+    subdirs_only: bool = False,
+) -> Tuple[Iterator[Path] | List[str], List[str]]:
     """
     Gets all paths in folders and subfolders
     strips the classnames assuming that the subfolders are the classnames
@@ -282,8 +285,42 @@ def iter_valid_paths(
     Returns:
         Tuple[Iterator[Path], List[str]]: An iterator of paths and a list of class names
     """
+    if subdirs_only:
+        keep_subdirs_only(path)
     walk = walk_dir(path)
+    keep_subdirs_only
     class_names = [subdir.name for subdir in path.iterdir() if subdir.is_dir()]
     formats_ = [f for f in formats]
-    paths = (path for path in walk if path.suffix in formats_)
+    if paths_as_iterator:
+        paths = (path for path in walk if path.suffix in formats_)
+    else:
+        paths = [path for path in walk if path.suffix in formats_]
     return paths, class_names
+
+
+def keep_subdirs_only(path: Path) -> None:
+    files = [file for file in path.iterdir() if file.is_file()]
+    for file in files:
+        file.unlink()
+
+
+
+
+def pad_collate(batch):
+    """
+    Custom collate function to pad sequences in a batch.
+
+    Args:
+        batch (list): List of (sequence, label) tuples.
+
+    Returns:
+        Tuple[torch.Tensor, torch.Tensor]: Padded sequences and corresponding labels.
+    """
+    sequences, labels = zip(*batch)  # Separate sequences and labels
+    # Pad sequences to the same length
+    padded_sequences = pad_sequence(sequences, batch_first=True)
+    labels = torch.tensor(labels)  # Convert labels to tensor
+
+    lengths = torch.tensor([len(seq) for seq in sequences])  # Original sequence lengths
+
+    return padded_sequences, labels, lengths

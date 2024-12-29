@@ -1,7 +1,5 @@
 from typing import Any, Dict, Optional, Tuple
-
 from torch import Tensor, nn
-
 
 class ConvBlock(nn.Module):
     def __init__(self, in_channels: int, out_channels: int, pool: bool = True) -> None:
