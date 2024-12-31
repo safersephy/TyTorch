@@ -110,3 +110,37 @@ class GesturesTensorLoaderStrategy(DataLoadingStrategy):
             all_data["labels"].append(y)
 
         return all_data["data"], all_data["labels"]
+
+class SunspotTensorLoaderStrategy(DataLoadingStrategy):
+    def __init__(
+        self,
+        source_url: str,
+        bronze_folder: str,
+        bronze_filename: str,
+        unzip: bool = False,
+        overwrite: bool = False,
+    ) -> None:
+        self.source_url = source_url
+        self.bronze_folder = Path(bronze_folder)  # Keep this as Path for internal usage
+        self.bronze_filename = bronze_filename
+        self.unzip = unzip
+        self.overwrite = overwrite
+
+    def set_dataset(self, dataset: Any) -> None:
+        self.dataset = dataset
+
+    def load_data(self) -> Tuple[torch.Tensor, torch.Tensor]:
+        # Convert Path object to str before passing to download_data
+        download_data(
+            source_url=self.source_url,
+            bronze_folder=str(self.bronze_folder),
+            bronze_filename=self.bronze_filename,
+            unzip=self.unzip,
+            overwrite=self.overwrite,
+        )
+
+
+        spots = np.genfromtxt(self.bronze_folder / self.bronze_filename, usecols=(3))  # type: ignore
+        all_data = torch.from_numpy(spots).type(torch.float32)  # type: ignore
+
+        return all_data, None

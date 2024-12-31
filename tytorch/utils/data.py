@@ -303,10 +303,7 @@ def keep_subdirs_only(path: Path) -> None:
     for file in files:
         file.unlink()
 
-
-
-
-def pad_collate(batch):
+def pad_collate_packed(batch):
     """
     Custom collate function to pad sequences in a batch.
 
@@ -324,3 +321,54 @@ def pad_collate(batch):
     lengths = torch.tensor([len(seq) for seq in sequences])  # Original sequence lengths
 
     return padded_sequences, labels, lengths
+
+def pad_collate(batch):
+    """
+    Custom collate function to pad sequences in a batch.
+
+    Args:
+        batch (list): List of (sequence, label) tuples.
+
+    Returns:
+        Tuple[torch.Tensor, torch.Tensor]: Padded sequences and corresponding labels.
+    """
+    sequences, labels = zip(*batch)  # Separate sequences and labels
+    # Pad sequences to the same length
+    padded_sequences = pad_sequence(sequences, batch_first=True)
+    labels = torch.tensor(labels)  # Convert labels to tensor
+
+    return padded_sequences, labels
+
+def split_data(data: torch.Tensor | List, indices: torch.Tensor) -> torch.Tensor | List:
+    is_tensor = isinstance(data, torch.Tensor)
+    if data is None:
+        return None
+    if is_tensor:
+        return data[indices]
+    else:
+        return [data[i] for i in indices.tolist()]
+    
+def ensure_3d_tensor(data: torch.Tensor, feature_dim: int = 1) -> torch.Tensor:
+    """
+    Ensures the input tensor is 3D (batch_size, sequence_length, features).
+    If input is 2D, assumes it's (batch_size, sequence_length) and adds a feature dimension.
+    
+    Args:
+        data: Input tensor that's either 2D or 3D
+        feature_dim: Size of feature dimension if we need to add it (default: 1)
+        
+    Returns:
+        3D tensor with shape (batch_size, sequence_length, features)
+    """
+    if data.dim() == 2:
+        # Add feature dimension: (batch, seq_len) -> (batch, seq_len, 1)
+        return data.unsqueeze(-1)
+    elif data.dim() == 3:
+        # Already in correct format
+        return data
+    else:
+        raise ValueError(
+            f"Expected 2D or 3D tensor, got {data.dim()}D tensor. "
+            f"Shape should be (batch_size, sequence_length) or "
+            f"(batch_size, sequence_length, features), but got {data.shape}"
+        )

@@ -7,6 +7,8 @@ from ray import train, tune
 from ray.air.integrations.mlflow import MLflowLoggerCallback
 from ray.tune import TuneConfig
 from ray.tune.search.hyperopt import HyperOptSearch
+from ray.tune.search.bohb import TuneBOHB
+from ray.tune.schedulers.hb_bohb import HyperBandForBOHB
 from torch.nn import CrossEntropyLoss
 from torch.optim import Adam
 from torch.optim.lr_scheduler import ReduceLROnPlateau
@@ -14,12 +16,12 @@ from torch.utils.data import DataLoader
 from torcheval.metrics import MulticlassAccuracy
 
 from tytorch.datapipeline import DataPipeline
-from tytorch.examples.models.CustomCNN import CNN
-from tytorch.strategies.global_transform_strategies import ImageTensorSplitStrategy
-from tytorch.strategies.item_transform_strategies import ImageTensorAugmentationStrategy
-from tytorch.strategies.loader_strategies import ImageTensorLoaderStrategy
+from tytorch.examples.models.rnn import packed_lstm, lstm
+from tytorch.strategies.global_transform_strategies import SequenceTensorSplitStrategy
+from tytorch.strategies.loader_strategies import GesturesTensorLoaderStrategy
 from tytorch.trainer import Trainer
 from tytorch.utils.mlflow import set_best_run_tag_and_log_model, set_mlflow_experiment
+from tytorch.utils.data import pad_collate_packed,pad_collate
 
 # initial params
 tuningmetric = "valid_loss"
@@ -27,76 +29,54 @@ tuninggoal = "min"
 n_trials = 60
 
 params = {
-    "model_class": CNN,
+    "model_class": packed_lstm,
     "batch_size": 32,
-    "n_epochs": 4,
-    "device": "mps",
-    "input_size": (32, 3, 224, 224),
-    "output_size": 5,
-    "lr": 1e-4,
-    "dropout": 0.3,
-    "conv_blocks": [
-        {
-            "num_conv_layers": tune.randint(1, 3),
-            "initial_filters": 32,
-            "growth_factor": 2,
-            "pool": True,
-            "residual": True,
-        },
-        {
-            "num_conv_layers": tune.randint(1, 3),
-            "initial_filters": 256,
-            "growth_factor": 1,
-            "pool": False,
-            "residual": False,
-        },
-    ],
-    "linear_blocks": [
-        {"out_features": 32, "dropout": 0.0},
-        {"out_features": 16, "dropout": 0.0},
-    ],
+    "n_epochs": 10,
+    "device": "cpu",
+    "input_size": 3,
+    "output_size": 20,
+    "lr": 1e-3,
+    "dropout": 0.5,
+    "batch_first": True,
+    "bidirectional": True,
+    "hidden_size": tune.qrandint(16, 64, 16),
+    "num_layers": tune.randint(1,6)
 }
 
 experiment_name = set_mlflow_experiment("tune")
 
-source_url = "https://storage.googleapis.com/download.tensorflow.org/example_images/flower_photos.tgz"
-bronze_folder = Path("./tytorch/examples/data/bronze").resolve()
-bronze_filename = "flowers.tgz"
+source_url = "https://github.com/raoulg/gestures/raw/main/gestures-dataset.zip"
+bronze_folder = "./tytorch/examples/data/bronze"
+bronze_filename = "gestures.zip"
 unzip = True
 
-extract_loader = ImageTensorLoaderStrategy(
+extract_loader = GesturesTensorLoaderStrategy(
     source_url=source_url,
-    bronze_folder=str(bronze_folder),  # Convert Path to str
+    bronze_folder=bronze_folder,
     bronze_filename=bronze_filename,
     unzip=unzip,
-    overwrite=False,
 )
 
-global_strategies = [ImageTensorSplitStrategy(test_frac=0.2, valid_frac=0.2)]
+global_strategies = [SequenceTensorSplitStrategy(test_frac=0.0, valid_frac=0.2)]
 
-item_transform_strategies = [ImageTensorAugmentationStrategy()]
+
 
 
 def tune_func(config: dict) -> None:
-    for idx, block in enumerate(config["conv_blocks"]):
-        config[f"conv_block_{idx}_num_conv_layers"] = block["num_conv_layers"]
-        config[f"conv_block_{idx}_initial_filters"] = block["initial_filters"]
-        config[f"conv_block_{idx}_growth_factor"] = block["growth_factor"]
-        config[f"conv_block_{idx}_pool"] = block["pool"]
-        config[f"conv_block_{idx}_residual"] = block["residual"]
+
 
     data_pipeline = DataPipeline(
         load_strategy=extract_loader, global_transform_strategies=global_strategies
     )
 
-    train_dataset, val_dataset, _ = data_pipeline.create_datasets(
-        item_transform_strategies
-    )
+    train_dataset, val_dataset, test_dataset = data_pipeline.create_datasets()
 
-    trainloader = DataLoader(
-        train_dataset, batch_size=config["batch_size"], shuffle=True
+    train_loader = torch.utils.data.DataLoader(
+        train_dataset, shuffle=True, batch_size=32, collate_fn=pad_collate_packed
     )
-    testloader = DataLoader(val_dataset, batch_size=config["batch_size"], shuffle=True)
+    val_loader = torch.utils.data.DataLoader(
+        val_dataset, batch_size=32, collate_fn=pad_collate_packed
+    )
 
     if callable(config["model_class"]):
         model = config["model_class"](config)
@@ -123,7 +103,7 @@ def tune_func(config: dict) -> None:
 
     n_epochs = int(params.get("n_epochs", 10))  # type: ignore
 
-    trainer.fit(n_epochs, trainloader, testloader)
+    trainer.fit(n_epochs, train_loader, val_loader)
 
 
 tuner = tune.Tuner(
@@ -131,7 +111,8 @@ tuner = tune.Tuner(
     param_space=params,
     tune_config=TuneConfig(
         mode=tuninggoal,
-        search_alg=HyperOptSearch(),
+        #search_alg=TuneBOHB(),
+        #scheduler=HyperBandForBOHB(),
         metric=tuningmetric,
         num_samples=n_trials,
         max_concurrent_trials=1,

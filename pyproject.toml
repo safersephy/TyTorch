@@ -8,14 +8,17 @@ authors = [
 dependencies = [
     "loguru",
     "pydantic",
-    "mlflow>=2.16.2",
+    "mlflow==2.16.2",
     "torch>=2.4.1",
-    "ray>=2.37.0",
     "torcheval>=0.0.7",
     "tqdm>=4.66.5",
     "torchinfo>=1.8.0",
     "torchvision>=0.19.1",
     "polars>=1.9.0",
+    "ray==2.37.0",
+    "hyperopt>=0.2.7",
+    "hpbandster>=0.7.4",
+    "configspace>=1.2.1",
 ]
 classifiers = [
     "Programming Language :: Python :: 3",

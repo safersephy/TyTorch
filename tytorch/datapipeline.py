@@ -110,7 +110,7 @@ class DataPipeline:
     def create_datasets(
         self,
         item_transform_strategies: Optional[Sequence[ItemTransformStrategy]] = None,
-    ) -> Tuple[TyTorchDataset, TyTorchDataset, TyTorchDataset]:
+    ) -> Tuple[TyTorchDataset, TyTorchDataset | None, TyTorchDataset | None]:
         """
         Creates and returns three TyTorchDataset instances for train, validation, and test sets.
 
@@ -123,9 +123,9 @@ class DataPipeline:
             item_transform_strategies or []
         )
 
-        if self.train_data is None or self.val_data is None or self.test_data is None:
+        if self.train_data is None:
             raise ValueError(
-                "Data splits have not been generated. Ensure the SplitStrategy has been applied."
+                "No train data found. Ensure prior pipeline strategies provide data to at least pipeline.train_data"
             )
 
         # Create TyTorchDataset instances for each split
@@ -133,16 +133,16 @@ class DataPipeline:
             data=self.train_data,
             labels=self.train_labels,
             item_transform_strategies=self.item_transform_strategies,
-        )
+        ) if self.train_data is not None else None
         val_dataset = TyTorchDataset(
             data=self.val_data,
             labels=self.val_labels,
             item_transform_strategies=self.item_transform_strategies,
-        )
+        ) if self.val_data is not None else None
         test_dataset = TyTorchDataset(
             data=self.test_data,
             labels=self.test_labels,
             item_transform_strategies=self.item_transform_strategies,
-        )
+        )if self.test_data is not None else None
 
         return train_dataset, val_dataset, test_dataset
