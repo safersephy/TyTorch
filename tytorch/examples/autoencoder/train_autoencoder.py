@@ -16,7 +16,7 @@ from torchvision.transforms import ToTensor
 from tytorch.examples.autoencoder.utils import VAESettings, VAEstreamer
 
 # from tytorch.examples.models.CustomVAE import AutoEncoder, Encoder, Decoder
-from tytorch.examples.models.CustomConvVAE import AutoEncoder, Decoder, Encoder
+from tytorch.examples.models.vae import ConvAutoEncoder, ConvDecoder, ConvEncoder
 from tytorch.trainer import Trainer
 from tytorch.utils.mlflow import set_mlflow_experiment
 
@@ -131,8 +131,8 @@ def main():
     config = asdict(presets)
     logger.info(f"the shape before: {X1.shape}")
 
-    encoder = Encoder()
-    decoder = Decoder()
+    encoder = ConvEncoder()
+    decoder = ConvDecoder()
 
     latent = encoder(X1)
     logger.info(f"the latent shape : {latent.shape}")
@@ -145,7 +145,7 @@ def main():
     loss = lossfn(x, X2)
     logger.info(f"Untrained loss: {loss}")
 
-    autoencoder = AutoEncoder(config)
+    autoencoder = ConvAutoEncoder(config)
 
     optimizer = Adam(autoencoder.parameters(), lr=params["lr"])
 

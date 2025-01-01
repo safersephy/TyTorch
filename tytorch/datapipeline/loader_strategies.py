@@ -7,7 +7,7 @@ import polars as pl
 import torch
 from tqdm import tqdm
 
-from tytorch.datapipeline import DataLoadingStrategy
+from tytorch.datapipeline.base import DataLoadingStrategy
 from tytorch.utils.data import download_data, iter_valid_paths, load_image
 
 DatasetDataType = torch.Tensor | np.ndarray | List | pd.DataFrame | pl.DataFrame | None

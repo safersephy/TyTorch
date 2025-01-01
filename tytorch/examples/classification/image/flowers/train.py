@@ -8,11 +8,11 @@ from torch.optim.lr_scheduler import ReduceLROnPlateau
 from torch.utils.data import DataLoader
 from torcheval.metrics import MulticlassAccuracy
 
-from tytorch.datapipeline import DataPipeline
-from tytorch.examples.models.CustomResNet import ResNet
-from tytorch.strategies.global_transform_strategies import ImageTensorSplitStrategy
-from tytorch.strategies.item_transform_strategies import ImageTensorAugmentationStrategy
-from tytorch.strategies.loader_strategies import ImageTensorLoaderStrategy
+from tytorch.datapipeline.base import DataPipeline
+from tytorch.examples.models.cnn import MiniResNet
+from tytorch.datapipeline.global_transform_strategies import ImageTensorSplitStrategy
+from tytorch.datapipeline.item_transform_strategies import ImageTensorAugmentationStrategy
+from tytorch.datapipeline.loader_strategies import ImageTensorLoaderStrategy
 from tytorch.trainer import EarlyStopping, Trainer
 from tytorch.utils.mlflow import get_training_config, set_mlflow_experiment
 
@@ -39,7 +39,7 @@ if params is None:
     # }
 
     params = {
-        "model_class": ResNet,
+        "model_class": MiniResNet,
         "batch_size": 32,
         "n_epochs": 100,
         "lr": 1e-4,

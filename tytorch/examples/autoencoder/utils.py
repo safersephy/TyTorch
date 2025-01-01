@@ -4,7 +4,7 @@ from typing import Iterator
 
 import torch
 import torch.nn.functional as F
-from mads_datasets.base import BaseDatastreamer
+
 
 
 @dataclass

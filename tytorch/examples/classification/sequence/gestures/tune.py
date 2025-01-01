@@ -15,10 +15,10 @@ from torch.optim.lr_scheduler import ReduceLROnPlateau
 from torch.utils.data import DataLoader
 from torcheval.metrics import MulticlassAccuracy
 
-from tytorch.datapipeline import DataPipeline
+from tytorch.datapipeline.base import DataPipeline
 from tytorch.examples.models.rnn import packed_lstm, lstm
-from tytorch.strategies.global_transform_strategies import SequenceTensorSplitStrategy
-from tytorch.strategies.loader_strategies import GesturesTensorLoaderStrategy
+from tytorch.datapipeline.global_transform_strategies import SequenceTensorSplitStrategy
+from tytorch.datapipeline.loader_strategies import GesturesTensorLoaderStrategy
 from tytorch.trainer import Trainer
 from tytorch.utils.mlflow import set_best_run_tag_and_log_model, set_mlflow_experiment
 from tytorch.utils.data import pad_collate_packed,pad_collate

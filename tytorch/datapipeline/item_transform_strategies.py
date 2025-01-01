@@ -4,7 +4,7 @@ from typing import Tuple
 import torch
 import torchvision.transforms.functional as f
 
-from tytorch.datapipeline import ItemTransformStrategy
+from tytorch.datapipeline.base import ItemTransformStrategy
 
 
 class ImageTensorAugmentationStrategy(ItemTransformStrategy):

@@ -2,7 +2,7 @@ from typing import Any, Optional, List
 
 import torch
 
-from tytorch.datapipeline import GlobalTransformStrategy
+from tytorch.datapipeline.base import GlobalTransformStrategy
 from tytorch.utils.data import split_data,ensure_3d_tensor
 
 

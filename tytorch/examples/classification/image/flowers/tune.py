@@ -13,11 +13,11 @@ from torch.optim.lr_scheduler import ReduceLROnPlateau
 from torch.utils.data import DataLoader
 from torcheval.metrics import MulticlassAccuracy
 
-from tytorch.datapipeline import DataPipeline
-from tytorch.examples.models.CustomCNN import CNN
-from tytorch.strategies.global_transform_strategies import ImageTensorSplitStrategy
-from tytorch.strategies.item_transform_strategies import ImageTensorAugmentationStrategy
-from tytorch.strategies.loader_strategies import ImageTensorLoaderStrategy
+from tytorch.datapipeline.base import DataPipeline
+from tytorch.examples.models.cnn import CNN
+from tytorch.datapipeline.global_transform_strategies import ImageTensorSplitStrategy
+from tytorch.datapipeline.item_transform_strategies import ImageTensorAugmentationStrategy
+from tytorch.datapipeline.loader_strategies import ImageTensorLoaderStrategy
 from tytorch.trainer import Trainer
 from tytorch.utils.mlflow import set_best_run_tag_and_log_model, set_mlflow_experiment
 
@@ -131,7 +131,7 @@ tuner = tune.Tuner(
     param_space=params,
     tune_config=TuneConfig(
         mode=tuninggoal,
-        search_alg=HyperOptSearch(),
+        #search_alg=HyperOptSearch(),
         metric=tuningmetric,
         num_samples=n_trials,
         max_concurrent_trials=1,
